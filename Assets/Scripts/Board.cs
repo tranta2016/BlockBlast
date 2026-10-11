@@ -15,6 +15,7 @@ public class Board : MonoBehaviour
 
     public int LastPlacedCells { get; private set; }
     public int LastClearedLines { get; private set; }
+
     private readonly List<Vector2Int> hoverPoints = new();
     private readonly List<int> highlightpolyominoCols = new();
     private readonly List<int> highlightpolyominoRows = new();
@@ -45,7 +46,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    public void Hover(Vector2Int point, int polyominoIndex)
+    public void Hover(Vector2Int point, int polyominoIndex, int colorIndex)
     {
         var polyomino = Polyominos.Get(polyominoIndex);
         var polyominoRows = polyomino.GetLength(0);
@@ -61,7 +62,7 @@ public class Board : MonoBehaviour
 
         if (hoverPoints.Count > 0)
         {
-            Hover();
+            Hover(colorIndex);
             Highlight(point, polyominoCols, polyominoRows);
 
             foreach (var fullCol in fullCols)
@@ -120,11 +121,12 @@ public class Board : MonoBehaviour
         return true;
     }
 
-    private void Hover()
+    private void Hover(int colorIndex)
     {
         foreach (var hoverPoint in hoverPoints)
         {
             data[hoverPoint.y, hoverPoint.x] = 1;
+            cells[hoverPoint.y, hoverPoint.x].SetColor(colorIndex);
             cells[hoverPoint.y, hoverPoint.x].Hover();
         }
     }
@@ -139,7 +141,7 @@ public class Board : MonoBehaviour
         hoverPoints.Clear();
     }
 
-    public bool Place(Vector2Int point, int polyominoIndex)
+    public bool Place(Vector2Int point, int polyominoIndex, int colorIndex)
     {
         var polyomino = Polyominos.Get(polyominoIndex);
         var polyominoRows = polyomino.GetLength(0);
@@ -151,19 +153,20 @@ public class Board : MonoBehaviour
         CollectHoverPoints(point, polyominoRows, polyominoCols, polyomino);
         if (hoverPoints.Count > 0)
         {
-            Place(point, polyominoCols, polyominoRows);
+            Place(point, polyominoCols, polyominoRows, colorIndex);
             return true;
         }
         return false;
     }
 
-    private void Place(Vector2Int point, int polyominoCols, int polyominoRows)
+    private void Place(Vector2Int point, int polyominoCols, int polyominoRows, int colorIndex)
     {
         LastPlacedCells = hoverPoints.Count;
 
         foreach (var hoverPoint in hoverPoints)
         {
             data[hoverPoint.y, hoverPoint.x] = 2;
+            cells[hoverPoint.y, hoverPoint.x].SetColor(colorIndex);
             cells[hoverPoint.y, hoverPoint.x].Normal();
         }
 

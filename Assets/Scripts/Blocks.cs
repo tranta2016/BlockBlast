@@ -6,6 +6,9 @@ public class Blocks : MonoBehaviour
     [SerializeField] private Board board;
     [SerializeField] private GameManager gameManager;
 
+    // Số màu dùng cho khối (0 đến 8). Màu xám số 9 để dành cho việc khác.
+    [SerializeField] private int colorCount = 9;
+
     private int[] polyominosIndexes;
     private int blockCount = 0;
 
@@ -31,8 +34,10 @@ public class Blocks : MonoBehaviour
         for (var i = 0; i < blocks.Length; i++)
         {
             polyominosIndexes[i] = Random.Range(0, Polyominos.Length);
+            var colorIndex = Random.Range(0, colorCount);
+
             blocks[i].gameObject.SetActive(true);
-            blocks[i].Show(polyominosIndexes[i]);
+            blocks[i].Show(polyominosIndexes[i], colorIndex);
         }
 
         blockCount = blocks.Length;
@@ -57,7 +62,7 @@ public class Blocks : MonoBehaviour
             }
         }
 
-            if (lose)
+        if (lose && gameManager != null)
         {
             gameManager.GameOver();
         }

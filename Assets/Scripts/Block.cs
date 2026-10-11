@@ -17,6 +17,7 @@ public class Block : MonoBehaviour
 
     private SortingGroup sortingGroup;
     private int polyominoIndex;
+    private int colorIndex;
 
     private readonly Vector3 inputOffset = new(0.0f, 2.0f, 0.0f);
     private readonly Cell[,] cells = new Cell[Size, Size];
@@ -51,7 +52,7 @@ public class Block : MonoBehaviour
         SetSortingOrder(RestSortingOrder);
     }
 
-    public void Show(int polyominoIndex)
+    public void Show(int polyominoIndex, int colorIndex)
     {
         Hide();
 
@@ -60,6 +61,7 @@ public class Block : MonoBehaviour
         SetSortingOrder(RestSortingOrder);
 
         this.polyominoIndex = polyominoIndex;
+        this.colorIndex = colorIndex;
 
         var polyomino = Polyominos.Get(polyominoIndex);
         var polyominoRows = polyomino.GetLength(0);
@@ -76,6 +78,7 @@ public class Block : MonoBehaviour
                     c - center.x + 0.5f,
                     r - center.y + 0.5f,
                     0.0f);
+                cells[r, c].SetColor(colorIndex);
                 cells[r, c].Normal();
             }
         }
@@ -115,7 +118,7 @@ public class Block : MonoBehaviour
 
         currentDragPoint = GetDragPoint();
         previousDragPoint = currentDragPoint;
-        board.Hover(currentDragPoint, polyominoIndex);
+        board.Hover(currentDragPoint, polyominoIndex, colorIndex);
         Highlight(board.HighlightpolyominoCols, board.HighlightpolyominoRows);
 
         previousMousePosition = Mouse.current.position.ReadValue();
@@ -138,7 +141,7 @@ public class Block : MonoBehaviour
             if (currentDragPoint != previousDragPoint)
             {
                 previousDragPoint = currentDragPoint;
-                board.Hover(currentDragPoint, polyominoIndex);
+                board.Hover(currentDragPoint, polyominoIndex, colorIndex);
                 Highlight(board.HighlightpolyominoCols, board.HighlightpolyominoRows);
             }
         }
@@ -152,7 +155,7 @@ public class Block : MonoBehaviour
         previousMousePosition = Vector2.positiveInfinity;
 
         currentDragPoint = GetDragPoint();
-        var placed = board.Place(currentDragPoint, polyominoIndex);
+        var placed = board.Place(currentDragPoint, polyominoIndex, colorIndex);
 
         transform.localPosition = position;
         transform.localScale = scale;
